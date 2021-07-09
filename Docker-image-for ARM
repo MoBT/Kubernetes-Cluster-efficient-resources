@@ -1,0 +1,27 @@
+FROM python:3.5
+LABEL maintainer="partial11"
+CMD mkdir /app
+COPY . /app
+WORKDIR /app
+RUN apt-get update \
+    && apt-get install m4  -y \
+    && apt-get install libssl-dev -y \
+    && apt-get install libgmp-dev -y \
+    && apt-get install flex -y \
+    && apt-get install bison -y \
+    && curl -k https://crypto.stanford.edu/pbc/files/pbc-0.5.14.tar.gz -o pbc-0.5.14.tar.gz  \
+    && tar -zxf pbc-0.5.14.tar.gz \
+    && cd pbc-0.5.14 \ 
+    && ./configure\
+    && make \
+    && make install \
+    && ldconfig \
+    && git clone https://github.com/JHUISI/charm.git \
+    && cd charm \
+    && ./configure.sh \
+    && make \
+    && make install \
+CMD test.txt /app/charm
+CMD pk /app/charm 
+CMD partial.py /app/charm 
+CMD python3 partial.py 
