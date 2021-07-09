@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: charm
+  labels:
+    app: charm
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+      nodePort: 31118
+  selector:
+    app: charm
+---
+apiVersion: apps/v1beta1 # for versions before 1.6.0 use extensions/v1beta1
+kind: Deployment
+metadata:
+  name: charm
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: charm
+    spec:
+      containers:
+      - name: charm
+        image: banitaha/charmimg:01
+        imagePullPolicy: Always
+        command: [ "/bin/bash", "-c", "--" ]
+        args: [ "while true; do sleep 30; done;" ]
+        ports:
+        - containerPort: 8080
+          protocol: TCP
